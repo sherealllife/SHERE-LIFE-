@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SHERE LIFE</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">SHERE LIFE</h1>
+            <ul class="nav-links">
+                <li><a href="#" id="logoutBtn">🚪 Sohoka</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <h2>Murakaza neza, <span id="userName"></span>!</h2>
+
+            <div class="balance-card">
+                <h3>💰 Balance yawe</h3>
+                <div class="amount" id="balance">0 RWF</div>
+            </div>
+
+            <div class="total-asset">
+                <h3>💰 Total Asset</h3>
+                <div class="total-amount" id="totalAsset">$0</div>
+            </div>
+
+            <div class="wallet-info">
+                <div class="wallet-card">
+                    <h3>💎 Tron Wallet</h3>
+                    <p id="tronAddress">Loading...</p>
+                    <button class="btn-small btn-primary" onclick="copyAddress()">📋 Copy Address</button>
+                </div>
+                <div class="crypto-balances">
+                    <div class="crypto-card">
+                        <h4>🟠 TRX Balance <span class="live-badge">LIVE</span></h4>
+                        <p id="trxBalance">0 TRX</p>
+                    </div>
+                    <div class="crypto-card">
+                        <h4>💵 USDT Balance <span class="live-badge">LIVE</span></h4>
+                        <p id="usdtBalance">0 USDT</p>
+                    </div>
+                    <div class="crypto-card">
+                        <h4>🪙 Trump Coin Balance</h4>
+                        <p id="trumpBalance">0 TRUMP</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons-crypto">
+                <button class="btn btn-primary" onclick="sendCrypto()">📤 Send</button>
+                <button class="btn btn-outline" onclick="receiveCrypto()">📥 Receive</button>
+            </div>
+
+            <div class="action-buttons">
+                <div class="deposit-section">
+                    <h3>💰 Kongeramo Amafaranga (Deposit)</h3>
+                    <form id="depositForm">
+                        <div class="form-group"><label>Ingano (RWF)</label><input type="number" id="depositAmount" required min="1000" placeholder="5000"></div>
+                        <button type="submit" class="btn btn-primary">💰 Deposit</button>
+                        <div id="depositMessage"></div>
+                    </form>
+                </div>
+                <div class="withdraw-section">
+                    <h3>💸 Gukuramo Amafaranga (Withdraw)</h3>
+                    <form id="withdrawForm">
+                        <div class="form-group"><label>💳 Wallet Address (Tron)</label><input type="text" id="withdrawAddress" required placeholder="T..."></div>
+                        <div class="form-group"><label>💰 Ingano (RWF)</label><input type="number" id="withdrawAmount" required min="1000" placeholder="5000"></div>
+                        <button type="submit" class="btn btn-danger">💸 Withdraw</button>
+                        <div id="withdrawMessage"></div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="loan-application">
+                <h3>📝 Saba inguzanyo nshya</h3>
+                <form id="loanForm">
+                    <div class="form-group"><label>Ingano (RWF)</label><input type="number" id="loanAmount" required min="1000" placeholder="10000"></div>
+                    <div class="form-group"><label>Impamvu y'inguzanyo</label><input type="text" id="loanPurpose" required placeholder="Gutunga ubucuruzi..."></div>
+                    <div class="form-group"><label>Itariki yo kwishyura</label><input type="date" id="loanDueDate" required></div>
+                    <button type="submit" class="btn btn-primary">📝 Saba inguzanyo</button>
+                    <div id="loanMessage"></div>
+                </form>
+            </div>
+
+            <div class="my-loans">
+                <h3>📋 Inguzanyo zawe</h3>
+                <div id="loansList" class="loans-grid">Loading...</div>
+            </div>
+
+            <div class="transactions-section">
+                <h3>📜 Amateka ya Transactions</h3>
+                <div class="transaction-tabs">
+                    <button class="tab-btn active" onclick="filterTransactions('all')">All</button>
+                    <button class="tab-btn" onclick="filterTransactions('sent')">Sent</button>
+                    <button class="tab-btn" onclick="filterTransactions('received')">Received</button>
+                </div>
+                <button id="showTransactionsBtn" class="btn btn-outline">📜 Reba Transactions</button>
+                <div id="transactionsList" class="transactions-grid" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SHERE LIFE</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">SHERE LIFE Admin</h1>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-tab="loans">📋 Inguzanyo</a></li>
+                <li><a href="#" data-tab="users">👥 Abakoresha</a></li>
+                <li><a href="#" data-tab="fund">💰 System Fund</a></li>
+                <li><a href="../../index.html">🏠 Ahabanza</a></li>
+                <li><a href="#" id="logoutBtn">🚪 Sohoka</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <h2>📊 Admin Dashboard</h2>
+
+            <!-- Loans Tab -->
+            <div id="loansTab" class="tab-content active">
+                <h3>Inguzanyo zose</h3>
+                <div class="filter-buttons">
+                    <button class="btn-filter active" data-filter="all">📌 Zose</button>
+                    <button class="btn-filter" data-filter="pending">⏳ Pending</button>
+                    <button class="btn-filter" data-filter="approved">✅ Approved</button>
+                    <button class="btn-filter" data-filter="paid">💸 Paid</button>
+                </div>
+                <div id="loansList" class="loans-grid">Loading...</div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="usersTab" class="tab-content">
+                <h3>👥 Abakoresha bose</h3>
+                <div id="usersList" class="users-grid">Loading...</div>
+            </div>
+
+            <!-- System Fund Tab -->
+            <div id="fundTab" class="tab-content">
+                <h3>💰 System Fund ($700M Reserve)</h3>
+                <div id="systemFund" class="balance-card">Loading...</div>
+
+                <div class="mint-section">
+                    <h3>🪙 Kongeramo Money (Mint)</h3>
+                    <form id="mintForm">
+                        <div class="form-group">
+                            <label>Ingano ($)</label>
+                            <input type="number" id="mintAmount" required min="1000">
+                        </div>
+                        <div class="form-group">
+                            <label>Ohereza kuri (user ID cyangwa 'community')</label>
+                            <input type="text" id="mintTo" value="community">
+                        </div>
+                        <button type="submit" class="btn btn-primary">🪙 Mint</button>
+                        <div id="mintMessage"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/admin.js"></script>
+</body>
+</html>

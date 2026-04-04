@@ -13,7 +13,7 @@ let refreshInterval = null;
 
 async function loadWallet() {
     try {
-        const res = await fetch('http://localhost:5000/api/wallet', {
+        const res = await fetch(`${API_URL}/wallet`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -34,7 +34,7 @@ async function loadTronBalances() {
     try {
         const address = document.getElementById('tronAddress').innerText;
         if (!address || address === 'Loading...') return;
-        const res = await fetch(`http://localhost:5000/api/tron/balance/${address}`, {
+        const res = await fetch(`${API_URL}/tron/balance/${address}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -63,7 +63,7 @@ function calculateTotalAsset() {
 
 async function loadLoans() {
     try {
-        const res = await fetch('http://localhost:5000/api/loan/my-loans', {
+        const res = await fetch(`${API_URL}/loan/my-loans`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -83,7 +83,7 @@ async function loadLoans() {
 document.getElementById('depositForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const amount = parseInt(document.getElementById('depositAmount').value);
-    const res = await fetch('http://localhost:5000/api/deposit', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ amount, paymentMethod: 'bank_transfer' }) });
+    const res = await fetch(`${API_URL}/deposit`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ amount, paymentMethod: 'bank_transfer' }) });
     const data = await res.json();
     document.getElementById('depositMessage').innerHTML = data.success ? `<p style="color:green;">✅ ${data.message}</p>` : `<p style="color:red;">❌ ${data.error}</p>`;
     if (data.success) { loadWallet(); document.getElementById('depositForm').reset(); }
@@ -94,7 +94,7 @@ document.getElementById('withdrawForm')?.addEventListener('submit', async (e) =>
     const amount = parseInt(document.getElementById('withdrawAmount').value);
     const walletAddress = document.getElementById('withdrawAddress').value;
     if (!walletAddress) { document.getElementById('withdrawMessage').innerHTML = '<p style="color:red;">❌ Wallet address irakenewe!</p>'; return; }
-    const res = await fetch('http://localhost:5000/api/withdraw', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ amount, paymentMethod: 'tron_wallet', walletAddress }) });
+    const res = await fetch(`${API_URL}/withdraw`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ amount, paymentMethod: 'tron_wallet', walletAddress }) });
     const data = await res.json();
     document.getElementById('withdrawMessage').innerHTML = data.success ? `<p style="color:green;">✅ ${data.message}</p>` : `<p style="color:red;">❌ ${data.error}</p>`;
     if (data.success) loadWallet();
@@ -105,7 +105,7 @@ document.getElementById('loanForm')?.addEventListener('submit', async (e) => {
     const amount = parseInt(document.getElementById('loanAmount').value);
     const purpose = document.getElementById('loanPurpose').value;
     const dueDate = document.getElementById('loanDueDate').value;
-    const res = await fetch('http://localhost:5000/api/loan/apply', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ amount, purpose, dueDate }) });
+    const res = await fetch(`${API_URL}/loan/apply`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ amount, purpose, dueDate }) });
     const data = await res.json();
     document.getElementById('loanMessage').innerHTML = data.success ? '<p style="color:green;">✅ Inguzanyo yasabwe neza!</p>' : `<p style="color:red;">❌ ${data.error}</p>`;
     if (data.success) { document.getElementById('loanForm').reset(); loadLoans(); }
@@ -115,23 +115,12 @@ window.sendCrypto = async () => {
     const currency = prompt("Enter currency (TRX/USDT/TRUMP):").toUpperCase();
     const address = prompt("Enter recipient address:");
     const amount = parseFloat(prompt("Enter amount:"));
-    
     if (!currency || !address || !amount) return;
-    
     try {
-        const res = await fetch('http://localhost:5000/api/crypto/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ currency, toAddress: address, amount })
-        });
+        const res = await fetch(`${API_URL}/crypto/send`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ currency, toAddress: address, amount }) });
         const data = await res.json();
         alert(data.message);
-    } catch (error) {
-        alert('Error: ' + error.message);
-    }
+    } catch (error) { alert('Error: ' + error.message); }
 };
 
 window.receiveCrypto = () => { alert(`Your Tron address: ${document.getElementById('tronAddress').innerText}`); };

@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = "echo 'No build step needed'"
+  command = ""
 
 [[redirects]]
   from = "/*"
@@ -19,8 +19,3 @@
   for = "/css/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/pages/*"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"

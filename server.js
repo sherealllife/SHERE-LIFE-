@@ -13,13 +13,12 @@ const app = express();
 // ============================================
 // 🛡️ SECURITY MIDDLEWARE
 // ============================================
-app.use(helmet());
 app.use(cors({
-    origin: process.env.CORS_ORIGIN ? [process.env.CORS_ORIGIN] : ['http://localhost:3000', 'http://localhost:5000'],
-    credentials: true
+    origin: ['http://localhost:3000', 'https://sherealllife.netlify.app', 'https://shere-life.vercel.app'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
-
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,

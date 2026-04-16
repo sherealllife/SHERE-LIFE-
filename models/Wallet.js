@@ -17,9 +17,8 @@ const WalletSchema = new mongoose.Schema({
     },
     tronAddress: {
         type: String,
-        default: null,
-        unique: true,
-        sparse: true
+        default: null
+        // NTA unique: true cyangwa sparse: true
     },
     tronPrivateKey: {
         type: String,

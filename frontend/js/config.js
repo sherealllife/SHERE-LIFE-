@@ -1,4 +1,5 @@
-const API_URL = 'https://shere-life-backend.onrender.com/api';
+const API_URL = "https://shere-life-backend.onrender.com";
+
 function setToken(token) {
     localStorage.setItem('token', token);
 }

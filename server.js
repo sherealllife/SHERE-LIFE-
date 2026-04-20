@@ -7,18 +7,17 @@ import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
-// CREATE APP FIRST
 const app = express();
 
-// ============================================
-// 🛡️ SECURITY MIDDLEWARE
-// ============================================
+// Middleware - IMPORTANT ORDER
+app.use(helmet());
 app.use(cors({
     origin: ['http://localhost:3000', 'https://sherealllife.netlify.app', 'https://shere-life.vercel.app'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    credentials: true
 }));
+app.use(express.json());  // <-- Iyi ni ngombwa
+app.use(express.urlencoded({ extended: true }));
+
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -27,9 +26,7 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// ============================================
-// 📍 IMPORT ROUTES
-// ============================================
+// Routes
 import authRoutes from './routes/auth.js';
 import walletRoutes from './routes/wallet.js';
 import depositRoutes from './routes/deposit.js';
@@ -41,9 +38,6 @@ import tronRoutes from './routes/tron.js';
 import systemFundRoutes from './routes/systemFund.js';
 import cryptoRoutes from './routes/crypto.js';
 
-// ============================================
-// 📍 ROUTES
-// ============================================
 app.use("/api/auth", authRoutes);
 app.use("/api/wallet", walletRoutes);
 app.use("/api/deposit", depositRoutes);
@@ -55,21 +49,14 @@ app.use("/api/tron", tronRoutes);
 app.use("/api/system-fund", systemFundRoutes);
 app.use("/api/crypto", cryptoRoutes);
 
-// Health check
 app.get("/", (req, res) => {
     res.json({ message: "🚀 SHERE LIFE API ikora neza!" });
 });
 
-// ============================================
-// 🗄️ MONGODB CONNECTION
-// ============================================
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ MongoDB connected"))
     .catch(err => console.log("❌ MongoDB error:", err));
 
-// ============================================
-// 🚀 START SERVER
-// ============================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);

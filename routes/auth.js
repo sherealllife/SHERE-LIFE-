@@ -1,73 +1,65 @@
-import express from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
-import Wallet from '../models/Wallet.js';
-import { protect } from '../middleware/auth.js';
-import { createWalletForUser } from '../services/tronService.js';
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+import User from "../models/User.js";
+import Wallet from "../models/Wallet.js";
+import { createTronWallet } from "../utils/tron.js";
+
+import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// REGISTER
-router.post('/register', async (req, res) => {
+// ================= REGISTER =================
+router.post("/register", async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
+        // Validation
         if (!name || !email || !password) {
-            return res.status(400).json({ error: 'All fields required' });
+            return res.status(400).json({ error: "All fields are required" });
         }
 
+        // Check if user exists
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ error: 'Email already exists' });
+            return res.status(400).json({ error: "Email already exists" });
         }
 
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Create user
         const user = await User.create({
             name,
             email,
             password: hashedPassword,
-            role: 'user',
+            role: "user",
             isVerified: true
         });
 
-        // Create local wallet (RWF)
-        let wallet = await Wallet.create({
+        // 🔥 Create Tron wallet
+        const walletData = await createTronWallet();
+
+        // Save wallet
+        const wallet = await Wallet.create({
             userId: user._id,
             balance: 0,
-            currency: 'RWF'
+            currency: "RWF",
+            tronAddress: walletData.address,
+            tronPrivateKey: walletData.privateKey
         });
 
-        // Create Tron wallet for user
-        try {
-            const tronWallet = await createWalletForUser(user._id);
-            if (tronWallet.success) {
-                wallet = await Wallet.findOneAndUpdate(
-                    { userId: user._id },
-                    { 
-                        tronAddress: tronWallet.address,
-                        tronPrivateKey: tronWallet.privateKey
-                    },
-                    { new: true, upsert: true }
-                );
-                console.log(`✅ Tron wallet created for ${email}: ${tronWallet.address}`);
-            } else {
-                console.error('Tron wallet creation failed:', tronWallet.error);
-            }
-        } catch (walletError) {
-            console.error('Wallet creation error:', walletError.message);
-        }
-
+        // Create token
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRE || '7d' }
+            { expiresIn: process.env.JWT_EXPIRE || "7d" }
         );
 
         res.json({
             success: true,
-            message: 'User registered successfully',
+            message: "User registered successfully",
             token,
             user: {
                 id: user._id,
@@ -82,38 +74,39 @@ router.post('/register', async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: "Registration failed" });
     }
 });
 
-// LOGIN
-router.post('/login', async (req, res) => {
+
+// ================= LOGIN =================
+router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password required' });
+            return res.status(400).json({ error: "Email and password required" });
         }
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: "User not found" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ error: 'Wrong password' });
+            return res.status(400).json({ error: "Wrong password" });
         }
 
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRE || '7d' }
+            { expiresIn: process.env.JWT_EXPIRE || "7d" }
         );
 
         res.json({
             success: true,
-            message: 'Login success',
+            message: "Login success",
             token,
             user: {
                 id: user._id,
@@ -128,10 +121,11 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// GET CURRENT USER
-router.get('/me', protect, async (req, res) => {
+
+// ================= GET CURRENT USER =================
+router.get("/me", protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password');
+        const user = await User.findById(req.user.id).select("-password");
         res.json({ success: true, user });
     } catch (error) {
         res.status(500).json({ error: error.message });

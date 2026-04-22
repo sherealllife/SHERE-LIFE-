@@ -1,9 +1,24 @@
-import express from 'express';
-import { protect, admin } from '../middleware/auth.js';
-import Wallet from '../models/Wallet.js';
-import Transaction from '../models/Transaction.js';
+import express from "express";
+import Wallet from "../models/Wallet.js";
+import Transaction from "../models/Transaction.js";
+import { protect, admin } from "../middleware/auth.js";
 
 const router = express.Router();
+
+// GET WALLET
+router.get("/", protect, async (req, res) => {
+    const wallet = await Wallet.findOne({ userId: req.user.id });
+
+    if (!wallet) {
+        return res.status(404).json({ message: "Wallet not found" });
+    }
+
+    res.json({
+        tronAddress: wallet.tronAddress,
+        balance: wallet.balance
+    });
+});
+
 
 // GET my wallet
 router.get('/', protect, async (req, res) => {

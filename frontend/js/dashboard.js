@@ -76,6 +76,8 @@ async function loadLoans() {
                 card.innerHTML = `<h4>Inguzanyo ya ${loan.amount.toLocaleString()} RWF</h4><span class="status ${loan.status}">${loan.status}</span><p><strong>Intego:</strong> ${loan.purpose || '-'}</p><p><strong>Itariki:</strong> ${new Date(loan.dueDate).toLocaleDateString()}</p><p><strong>Yishyuwe:</strong> ${loan.repaidAmount.toLocaleString()} RWF</p>`;
                 container.appendChild(card);
             });
+
+console.log('Loans data:', data);
         }
     } catch (error) { console.error(error); }
 }

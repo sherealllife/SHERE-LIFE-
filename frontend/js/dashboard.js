@@ -137,3 +137,17 @@ function stopLiveRefresh() { if (refreshInterval) { clearInterval(refreshInterva
 loadWallet(); loadLoans(); loadTronBalances(); startLiveRefresh();
 window.addEventListener('beforeunload', () => stopLiveRefresh());
 
+async function loadWallet() {
+    try {
+        console.log('Fetching wallet...');
+        const res = await fetch(`${API_URL}/wallet`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        console.log('Response status:', res.status);
+        const data = await res.json();
+        console.log('Wallet data:', data);
+        // ... ibindi
+    } catch (error) {
+        console.error('Wallet error:', error);
+    }
+}
